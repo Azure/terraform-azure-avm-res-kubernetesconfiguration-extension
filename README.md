@@ -9,30 +9,21 @@ This is a template repo for Terraform Azure Verified Modules.
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.12)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
-
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.7)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
-- [azurerm_private_endpoint.this_managed_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
-- [azurerm_private_endpoint.this_unmanaged_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
-- [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
-- [azurerm_resource_group.TODO](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
+- [azapi_resource.this](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [modtm_telemetry.telemetry](https://registry.terraform.io/providers/Azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
-- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
-- [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [modtm_module_source.telemetry](https://registry.terraform.io/providers/Azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -41,19 +32,19 @@ The following input variables are required:
 
 ### <a name="input_location"></a> [location](#input\_location)
 
-Description: Azure region where the resource should be deployed.
+Description: The location of the resource.
 
 Type: `string`
 
 ### <a name="input_name"></a> [name](#input\_name)
 
-Description: The name of the this resource.
+Description: The name of the resource.
 
 Type: `string`
 
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: The resource group where the resources will be deployed.
+Description: The parent resource ID for this resource.
 
 Type: `string`
 
@@ -61,63 +52,53 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="input_customer_managed_key"></a> [customer\_managed\_key](#input\_customer\_managed\_key)
+### <a name="input_aks_assigned_identity"></a> [aks\_assigned\_identity](#input\_aks\_assigned\_identity)
 
-Description: A map describing customer-managed keys to associate with the resource. This includes the following properties:
-- `key_vault_resource_id` - The resource ID of the Key Vault where the key is stored.
-- `key_name` - The name of the key.
-- `key_version` - (Optional) The version of the key. If not specified, the latest version is used.
-- `user_assigned_identity` - (Optional) An object representing a user-assigned identity with the following properties:
-  - `resource_id` - The resource ID of the user-assigned identity.
+Description: Identity of the Extension resource in an AKS cluster
+
+- `type` - The identity type.
 
 Type:
 
 ```hcl
 object({
-    key_vault_resource_id = string
-    key_name              = string
-    key_version           = optional(string, null)
-    user_assigned_identity = optional(object({
-      resource_id = string
-    }), null)
+    type = optional(string)
   })
 ```
 
 Default: `null`
 
-### <a name="input_diagnostic_settings"></a> [diagnostic\_settings](#input\_diagnostic\_settings)
+### <a name="input_auto_upgrade_minor_version"></a> [auto\_upgrade\_minor\_version](#input\_auto\_upgrade\_minor\_version)
 
-Description: A map of diagnostic settings to create on the Key Vault. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: Flag to note if this extension participates in auto upgrade of minor version, or not.
 
-- `name` - (Optional) The name of the diagnostic setting. One will be generated if not set, however this will not be unique if you want to create multiple diagnostic setting resources.
-- `log_categories` - (Optional) A set of log categories to send to the log analytics workspace. Defaults to `[]`.
-- `log_groups` - (Optional) A set of log groups to send to the log analytics workspace. Defaults to `["allLogs"]`.
-- `metric_categories` - (Optional) A set of metric categories to send to the log analytics workspace. Defaults to `["AllMetrics"]`.
-- `log_analytics_destination_type` - (Optional) The destination type for the diagnostic setting. Possible values are `Dedicated` and `AzureDiagnostics`. Defaults to `Dedicated`.
-- `workspace_resource_id` - (Optional) The resource ID of the log analytics workspace to send logs and metrics to.
-- `storage_account_resource_id` - (Optional) The resource ID of the storage account to send logs and metrics to.
-- `event_hub_authorization_rule_resource_id` - (Optional) The resource ID of the event hub authorization rule to send logs and metrics to.
-- `event_hub_name` - (Optional) The name of the event hub. If none is specified, the default event hub will be selected.
-- `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic LogsLogs.
+Type: `bool`
 
-Type:
+Default: `null`
 
-```hcl
-map(object({
-    name                                     = optional(string, null)
-    log_categories                           = optional(set(string), [])
-    log_groups                               = optional(set(string), ["allLogs"])
-    metric_categories                        = optional(set(string), ["AllMetrics"])
-    log_analytics_destination_type           = optional(string, "Dedicated")
-    workspace_resource_id                    = optional(string, null)
-    storage_account_resource_id              = optional(string, null)
-    event_hub_authorization_rule_resource_id = optional(string, null)
-    event_hub_name                           = optional(string, null)
-    marketplace_partner_resource_id          = optional(string, null)
-  }))
-```
+### <a name="input_configuraiton_protected_settings_version"></a> [configuraiton\_protected\_settings\_version](#input\_configuraiton\_protected\_settings\_version)
 
-Default: `{}`
+Description: The version of the configuration protected settings. This is used to determine whether the protected settings have changed or not, since the values themselves are not tracked due to being sensitive. If this version value changes, then the protected settings will be applied again.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_configuration_protected_settings"></a> [configuration\_protected\_settings](#input\_configuration\_protected\_settings)
+
+Description: Configuration settings that are sensitive, as name-value pairs for configuring this extension.
+
+Type: `map(string)`
+
+Default: `null`
+
+### <a name="input_configuration_settings"></a> [configuration\_settings](#input\_configuration\_settings)
+
+Description: Configuration settings, as name-value pairs for configuring this extension.
+
+Type: `map(string)`
+
+Default: `null`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
@@ -129,30 +110,25 @@ Type: `bool`
 
 Default: `true`
 
-### <a name="input_lock"></a> [lock](#input\_lock)
+### <a name="input_extension_type"></a> [extension\_type](#input\_extension\_type)
 
-Description: Controls the Resource Lock configuration for this resource. The following properties can be specified:
+Description: Type of the Extension, of which this resource is an instance of.  It must be one of the Extension Types registered with Microsoft.KubernetesConfiguration by the Extension publisher.
 
-- `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
-- `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
+Type: `string`
 
-Type:
+Default: `null`
 
-```hcl
-object({
-    kind = string
-    name = optional(string, null)
-  })
-```
+### <a name="input_extension_version"></a> [extension\_version](#input\_extension\_version)
+
+Description: User-specified version of the extension for this extension to 'pin'. To use 'version', autoUpgradeMinorVersion must be 'false'.
+
+Type: `string`
 
 Default: `null`
 
 ### <a name="input_managed_identities"></a> [managed\_identities](#input\_managed\_identities)
 
-Description: Controls the Managed Identity configuration on this resource. The following properties can be specified:
-
-- `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.
-- `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
+Description: Controls the Managed Identity configuration on this resource.
 
 Type:
 
@@ -165,107 +141,59 @@ object({
 
 Default: `{}`
 
-### <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints)
+### <a name="input_plan"></a> [plan](#input\_plan)
 
-Description: A map of private endpoints to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: Details of the resource plan.
 
-- `name` - (Optional) The name of the private endpoint. One will be generated if not set.
-- `role_assignments` - (Optional) A map of role assignments to create on the private endpoint. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time. See `var.role_assignments` for more information.
-- `lock` - (Optional) The lock level to apply to the private endpoint. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`.
-- `tags` - (Optional) A mapping of tags to assign to the private endpoint.
-- `subnet_resource_id` - The resource ID of the subnet to deploy the private endpoint in.
-- `private_dns_zone_group_name` - (Optional) The name of the private DNS zone group. One will be generated if not set.
-- `private_dns_zone_resource_ids` - (Optional) A set of resource IDs of private DNS zones to associate with the private endpoint. If not set, no zone groups will be created and the private endpoint will not be associated with any private DNS zones. DNS records must be managed external to this module.
-- `application_security_group_resource_ids` - (Optional) A map of resource IDs of application security groups to associate with the private endpoint. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-- `private_service_connection_name` - (Optional) The name of the private service connection. One will be generated if not set.
-- `network_interface_name` - (Optional) The name of the network interface. One will be generated if not set.
-- `location` - (Optional) The Azure location where the resources will be deployed. Defaults to the location of the resource group.
-- `resource_group_name` - (Optional) The resource group where the resources will be deployed. Defaults to the resource group of this resource.
-- `ip_configurations` - (Optional) A map of IP configurations to create on the private endpoint. If not specified the platform will create one. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-  - `name` - The name of the IP configuration.
-  - `private_ip_address` - The private IP address of the IP configuration.
+- `name` - A user defined name of the 3rd Party Artifact that is being procured.
+- `product` - The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to the OfferID specified for the artifact at the time of Data Market onboarding.
+- `promotion_code` - A publisher provided promotion code as provisioned in Data Market for the said product/artifact.
+- `publisher` - The publisher of the 3rd Party Artifact that is being bought. E.g. NewRelic
+- `version` - The version of the desired product/artifact.
 
 Type:
 
 ```hcl
-map(object({
-    name = optional(string, null)
-    role_assignments = optional(map(object({
-      role_definition_id_or_name             = string
-      principal_id                           = string
-      description                            = optional(string, null)
-      skip_service_principal_aad_check       = optional(bool, false)
-      condition                              = optional(string, null)
-      condition_version                      = optional(string, null)
-      delegated_managed_identity_resource_id = optional(string, null)
-    })), {})
-    lock = optional(object({
-      kind = string
-      name = optional(string, null)
-    }), null)
-    tags                                    = optional(map(string), null)
-    subnet_resource_id                      = string
-    private_dns_zone_group_name             = optional(string, "default")
-    private_dns_zone_resource_ids           = optional(set(string), [])
-    application_security_group_associations = optional(map(string), {})
-    private_service_connection_name         = optional(string, null)
-    network_interface_name                  = optional(string, null)
-    location                                = optional(string, null)
-    resource_group_name                     = optional(string, null)
-    ip_configurations = optional(map(object({
-      name               = string
-      private_ip_address = string
-    })), {})
-  }))
+object({
+    name           = string
+    product        = string
+    promotion_code = optional(string)
+    publisher      = string
+    version        = optional(string)
+  })
 ```
 
-Default: `{}`
+Default: `null`
 
-### <a name="input_private_endpoints_manage_dns_zone_group"></a> [private\_endpoints\_manage\_dns\_zone\_group](#input\_private\_endpoints\_manage\_dns\_zone\_group)
+### <a name="input_release_train"></a> [release\_train](#input\_release\_train)
 
-Description: Whether to manage private DNS zone groups with this module. If set to false, you must manage private DNS zone groups externally, e.g. using Azure Policy.
+Description: ReleaseTrain this extension participates in for auto-upgrade (e.g. Stable, Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
 
-Type: `bool`
+Type: `string`
 
-Default: `true`
+Default: `null`
 
-### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
+### <a name="input_scope"></a> [scope](#input\_scope)
 
-Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: Scope at which the extension is installed.
 
-- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-- `principal_id` - The ID of the principal to assign the role to.
-- `description` - The description of the role assignment.
-- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
-- `condition` - The condition which will be used to scope the role assignment.
-- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
-- `delegated_managed_identity_resource_id` - The delegated Azure Resource Id which contains a Managed Identity. Changing this forces a new resource to be created.
-- `principal_type` - The type of the principal\_id. Possible values are `User`, `Group` and `ServicePrincipal`. Changing this forces a new resource to be created. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.
-
-> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+- `cluster` - Specifies that the scope of the extension is Cluster
+  - `release_namespace` - Namespace where the extension Release must be placed, for a Cluster scoped extension.  If this namespace does not exist, it will be created
+- `namespace` - Specifies that the scope of the extension is Namespace
+  - `target_namespace` - Namespace where the extension will be created for an Namespace scoped extension.  If this namespace does not exist, it will be created
 
 Type:
 
 ```hcl
-map(object({
-    role_definition_id_or_name             = string
-    principal_id                           = string
-    description                            = optional(string, null)
-    skip_service_principal_aad_check       = optional(bool, false)
-    condition                              = optional(string, null)
-    condition_version                      = optional(string, null)
-    delegated_managed_identity_resource_id = optional(string, null)
-    principal_type                         = optional(string, null)
-  }))
+object({
+    cluster = optional(object({
+      release_namespace = optional(string)
+    }))
+    namespace = optional(object({
+      target_namespace = optional(string)
+    }))
+  })
 ```
-
-Default: `{}`
-
-### <a name="input_tags"></a> [tags](#input\_tags)
-
-Description: (Optional) Tags of the resource.
-
-Type: `map(string)`
 
 Default: `null`
 
@@ -273,9 +201,81 @@ Default: `null`
 
 The following outputs are exported:
 
-### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
+### <a name="output_aks_assigned_identity_principal_id"></a> [aks\_assigned\_identity\_principal\_id](#output\_aks\_assigned\_identity\_principal\_id)
 
-Description:   A map of the private endpoints created.
+Description: The principal ID of resource identity.
+
+### <a name="output_aks_assigned_identity_tenant_id"></a> [aks\_assigned\_identity\_tenant\_id](#output\_aks\_assigned\_identity\_tenant\_id)
+
+Description: The tenant ID of resource.
+
+### <a name="output_api_version"></a> [api\_version](#output\_api\_version)
+
+Description: The resource api version
+
+### <a name="output_current_version"></a> [current\_version](#output\_current\_version)
+
+Description: Currently installed version of the extension.
+
+### <a name="output_custom_location_settings"></a> [custom\_location\_settings](#output\_custom\_location\_settings)
+
+Description: Custom Location settings properties.
+
+### <a name="output_error_info"></a> [error\_info](#output\_error\_info)
+
+Description: Error information from the Agent - e.g. errors during installation.
+
+### <a name="output_error_info_additional_info"></a> [error\_info\_additional\_info](#output\_error\_info\_additional\_info)
+
+Description: The error additional info.
+
+### <a name="output_error_info_code"></a> [error\_info\_code](#output\_error\_info\_code)
+
+Description: The error code.
+
+### <a name="output_error_info_details"></a> [error\_info\_details](#output\_error\_info\_details)
+
+Description: The error details.
+
+### <a name="output_error_info_message"></a> [error\_info\_message](#output\_error\_info\_message)
+
+Description: The error message.
+
+### <a name="output_error_info_target"></a> [error\_info\_target](#output\_error\_info\_target)
+
+Description: The error target.
+
+### <a name="output_identity_principal_id"></a> [identity\_principal\_id](#output\_identity\_principal\_id)
+
+Description: The principal ID of resource identity.
+
+### <a name="output_identity_tenant_id"></a> [identity\_tenant\_id](#output\_identity\_tenant\_id)
+
+Description: The tenant ID of resource.
+
+### <a name="output_is_system_extension"></a> [is\_system\_extension](#output\_is\_system\_extension)
+
+Description: Flag to note if this extension is a system extension
+
+### <a name="output_name"></a> [name](#output\_name)
+
+Description: The name of the created resource.
+
+### <a name="output_package_uri"></a> [package\_uri](#output\_package\_uri)
+
+Description: Uri of the Helm package
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The ID of the created resource.
+
+### <a name="output_system_data"></a> [system\_data](#output\_system\_data)
+
+Description: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+
+### <a name="output_type"></a> [type](#output\_type)
+
+Description: The resource type
 
 ## Modules
 
