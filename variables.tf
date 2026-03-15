@@ -1,10 +1,3 @@
-variable "location" {
-  type        = string
-  description = <<DESCRIPTION
-The location of the resource.
-DESCRIPTION
-}
-
 variable "name" {
   type        = string
   description = <<DESCRIPTION
@@ -15,8 +8,14 @@ DESCRIPTION
 variable "parent_id" {
   type        = string
   description = <<DESCRIPTION
-The parent resource ID for this resource.
+The parent resource ID for this resource. For an AKS cluster extension, this should be the resource ID of the AKS cluster to which this extension will be attached, in the format:
+ - `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}`
 DESCRIPTION
+
+  validation {
+    error_message = "Must be an AKS cluster resource ID in the format: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}"
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.ContainerService/managedClusters/[^/]+$", var.parent_id))
+  }
 }
 
 variable "aks_assigned_identity" {

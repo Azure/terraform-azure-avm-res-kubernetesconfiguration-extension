@@ -11,7 +11,6 @@ resource "azapi_resource" "this" {
     "properties.aksAssignedIdentity.tenantId",
     "properties.currentVersion",
     "properties.customLocationSettings",
-    "properties.isSystemExtension",
     "properties.packageUri",
   ]
   sensitive_body = var.configuration_protected_settings != null ? {

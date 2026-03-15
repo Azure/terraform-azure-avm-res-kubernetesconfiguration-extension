@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.12"
+  required_version = "~> 1.11"
 
   required_providers {
     azapi = {
@@ -9,6 +9,10 @@ terraform {
     modtm = {
       source  = "Azure/modtm"
       version = "~> 0.3"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
     }
   }
 }

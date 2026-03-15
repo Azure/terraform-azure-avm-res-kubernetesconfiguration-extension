@@ -9,11 +9,13 @@ This is a template repo for Terraform Azure Verified Modules.
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.12)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.7)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
 ## Resources
 
@@ -30,12 +32,6 @@ The following resources are used by this module:
 
 The following input variables are required:
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The location of the resource.
-
-Type: `string`
-
 ### <a name="input_name"></a> [name](#input\_name)
 
 Description: The name of the resource.
@@ -44,7 +40,8 @@ Type: `string`
 
 ### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: The parent resource ID for this resource.
+Description: The parent resource ID for this resource. For an AKS cluster extension, this should be the resource ID of the AKS cluster to which this extension will be attached, in the format:
+ - `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}`
 
 Type: `string`
 
@@ -221,30 +218,6 @@ Description: Currently installed version of the extension.
 
 Description: Custom Location settings properties.
 
-### <a name="output_error_info"></a> [error\_info](#output\_error\_info)
-
-Description: Error information from the Agent - e.g. errors during installation.
-
-### <a name="output_error_info_additional_info"></a> [error\_info\_additional\_info](#output\_error\_info\_additional\_info)
-
-Description: The error additional info.
-
-### <a name="output_error_info_code"></a> [error\_info\_code](#output\_error\_info\_code)
-
-Description: The error code.
-
-### <a name="output_error_info_details"></a> [error\_info\_details](#output\_error\_info\_details)
-
-Description: The error details.
-
-### <a name="output_error_info_message"></a> [error\_info\_message](#output\_error\_info\_message)
-
-Description: The error message.
-
-### <a name="output_error_info_target"></a> [error\_info\_target](#output\_error\_info\_target)
-
-Description: The error target.
-
 ### <a name="output_identity_principal_id"></a> [identity\_principal\_id](#output\_identity\_principal\_id)
 
 Description: The principal ID of resource identity.
@@ -252,10 +225,6 @@ Description: The principal ID of resource identity.
 ### <a name="output_identity_tenant_id"></a> [identity\_tenant\_id](#output\_identity\_tenant\_id)
 
 Description: The tenant ID of resource.
-
-### <a name="output_is_system_extension"></a> [is\_system\_extension](#output\_is\_system\_extension)
-
-Description: Flag to note if this extension is a system extension
 
 ### <a name="output_name"></a> [name](#output\_name)
 
@@ -268,14 +237,6 @@ Description: Uri of the Helm package
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The ID of the created resource.
-
-### <a name="output_system_data"></a> [system\_data](#output\_system\_data)
-
-Description: Azure Resource Manager metadata containing createdBy and modifiedBy information.
-
-### <a name="output_type"></a> [type](#output\_type)
-
-Description: The resource type
 
 ## Modules
 
