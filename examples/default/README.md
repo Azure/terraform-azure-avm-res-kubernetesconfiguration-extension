@@ -76,12 +76,20 @@ module "aks" {
   name      = module.naming.kubernetes_cluster.name_unique
   parent_id = azapi_resource.rg.id
   default_agent_pool = {
-    count_of = 1
-    vm_size  = "Standard_D2s_v6"
+    availability_zones  = ["1", "2", "3"]
+    count_of            = 2
+    enable_auto_scaling = true
+    max_count           = 3
+    min_count           = 2
+    vm_size             = "Standard_D2s_v6"
   }
   dns_prefix = "extension-example"
   managed_identities = {
     system_assigned = true
+  }
+  sku = {
+    name = "Base"
+    tier = "Standard"
   }
 }
 
