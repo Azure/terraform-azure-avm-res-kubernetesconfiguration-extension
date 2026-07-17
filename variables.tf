@@ -1,8 +1,20 @@
+variable "extension_type" {
+  type        = string
+  description = <<DESCRIPTION
+Type of the Extension, of which this resource is an instance of.  It must be one of the Extension Types registered with Microsoft.KubernetesConfiguration by the Extension publisher.
+DESCRIPTION
+}
+
 variable "name" {
   type        = string
   description = <<DESCRIPTION
 The name of the resource.
 DESCRIPTION
+
+  validation {
+    condition     = length(var.name) >= 1
+    error_message = "name must have a minimum length of 1."
+  }
 }
 
 variable "parent_id" {
@@ -18,21 +30,43 @@ DESCRIPTION
   }
 }
 
+variable "additional_details" {
+  type = object({
+    docs                  = optional(string)
+    release_notes         = optional(string)
+    troubleshooting_guide = optional(string)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Additional details provided by the extension publisher.
+
+- `docs` - Documentation for the extension.
+- `release_notes` - Release notes for the extension.
+- `troubleshooting_guide` - Troubleshooting guide for the extension.
+DESCRIPTION
+}
+
 variable "aks_assigned_identity" {
   type = object({
-    type = optional(string)
+    client_id   = optional(string)
+    object_id   = optional(string)
+    resource_id = optional(string)
+    type        = optional(string)
   })
   default     = null
   description = <<DESCRIPTION
 Identity of the Extension resource in an AKS cluster
 
 - `type` - The identity type.
+- `client_id` - The client ID of the resource identity.
+- `object_id` - The object ID of the resource identity.
+- `resource_id` - The resource ID of the resource identity.
 
 DESCRIPTION
 
   validation {
-    condition     = var.aks_assigned_identity == null || var.aks_assigned_identity.type == null || contains(["SystemAssigned", "UserAssigned"], var.aks_assigned_identity.type)
-    error_message = "aks_assigned_identity.type must be one of: [\"SystemAssigned\", \"UserAssigned\"]."
+    condition     = var.aks_assigned_identity == null || var.aks_assigned_identity.type == null || contains(["SystemAssigned", "UserAssigned", "Workload"], var.aks_assigned_identity.type)
+    error_message = "aks_assigned_identity.type must be one of: [\"SystemAssigned\", \"UserAssigned\", \"Workload\"]."
   }
 }
 
@@ -44,20 +78,31 @@ Flag to note if this extension participates in auto upgrade of minor version, or
 DESCRIPTION
 }
 
-variable "configuraiton_protected_settings_version" {
+variable "auto_upgrade_mode" {
   type        = string
   default     = null
-  description = <<DESCRIPTION
-The version of the configuration protected settings. This is used to determine whether the protected settings have changed or not, since the values themselves are not tracked due to being sensitive. If this version value changes, then the protected settings will be applied again.
-DESCRIPTION
+  description = "The extension auto-upgrade mode. Azure defaults this to `compatible`."
+
+  validation {
+    condition     = var.auto_upgrade_mode == null || contains(["none", "patch", "compatible"], var.auto_upgrade_mode)
+    error_message = "auto_upgrade_mode must be one of: \"none\", \"patch\", or \"compatible\"."
+  }
 }
 
 variable "configuration_protected_settings" {
   type        = map(string)
-  ephemeral   = true
   default     = null
   description = <<DESCRIPTION
 Configuration settings that are sensitive, as name-value pairs for configuring this extension.
+DESCRIPTION
+  ephemeral   = true
+}
+
+variable "configuration_protected_settings_version" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+The version of the configuration protected settings. This is used to determine whether the protected settings have changed or not, since the values themselves are not tracked due to being sensitive. If this version value changes, then the protected settings will be applied again.
 DESCRIPTION
 }
 
@@ -80,14 +125,6 @@ DESCRIPTION
   nullable    = false
 }
 
-variable "extension_type" {
-  type        = string
-  default     = null
-  description = <<DESCRIPTION
-Type of the Extension, of which this resource is an instance of.  It must be one of the Extension Types registered with Microsoft.KubernetesConfiguration by the Extension publisher.
-DESCRIPTION
-}
-
 variable "extension_version" {
   type        = string
   default     = null
@@ -96,17 +133,43 @@ User-specified version of the extension for this extension to 'pin'. To use 'ver
 DESCRIPTION
 }
 
+variable "managed_by" {
+  type        = string
+  default     = null
+  description = "The fully qualified resource ID of the resource that manages this extension."
+}
+
 # tflint-ignore: terraform_unused_declarations
 variable "managed_identities" {
   type = object({
-    system_assigned            = optional(bool, false)
-    user_assigned_resource_ids = optional(set(string), [])
+    system_assigned = optional(bool, false)
   })
   default     = {}
   description = <<DESCRIPTION
 Controls the Managed Identity configuration on this resource.
 DESCRIPTION
   nullable    = false
+}
+
+variable "management_details" {
+  type = object({
+    access_details = optional(list(object({
+      allowed_actions = optional(list(string))
+      description     = optional(string)
+      entity          = optional(string)
+    })))
+    category = optional(string)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Management details for the extension.
+
+- `access_details` - Access details for the managing entity.
+  - `allowed_actions` - Actions allowed for the entity.
+  - `description` - Description of the entity.
+  - `entity` - Entity to which the access details apply.
+- `category` - Category of the managing entity.
+DESCRIPTION
 }
 
 variable "plan" {
@@ -157,4 +220,36 @@ Scope at which the extension is installed.
   - `target_namespace` - Namespace where the extension will be created for an Namespace scoped extension.  If this namespace does not exist, it will be created
 
 DESCRIPTION
+
+  validation {
+    condition     = var.scope == null || (var.scope.cluster == null) != (var.scope.namespace == null)
+    error_message = "scope must define exactly one of cluster or namespace."
+  }
+}
+
+variable "statuses" {
+  type = list(object({
+    code           = optional(string)
+    display_status = optional(string)
+    level          = optional(string)
+    message        = optional(string)
+    time           = optional(string)
+  }))
+  default     = null
+  description = <<DESCRIPTION
+Statuses supplied by the extension publisher.
+
+- `code` - Status code.
+- `display_status` - Short status description.
+- `level` - Status level.
+- `message` - Detailed status message.
+- `time` - ISO 8601 status timestamp.
+DESCRIPTION
+
+  validation {
+    condition = var.statuses == null || alltrue([
+      for status in var.statuses : status.level == null || contains(["Error", "Information", "Warning"], status.level)
+    ])
+    error_message = "Each statuses entry level must be one of: \"Error\", \"Information\", or \"Warning\"."
+  }
 }
