@@ -167,11 +167,14 @@ Default: `null`
 
 Description: Controls the Managed Identity configuration on this resource.
 
+Only system-assigned identity is supported by the Microsoft.KubernetesConfiguration extension resource.
+
 Type:
 
 ```hcl
 object({
-    system_assigned = optional(bool, false)
+    system_assigned            = optional(bool, false)
+    user_assigned_resource_ids = optional(set(string), [])
   })
 ```
 

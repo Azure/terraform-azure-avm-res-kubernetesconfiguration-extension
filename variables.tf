@@ -142,13 +142,21 @@ variable "managed_by" {
 # tflint-ignore: terraform_unused_declarations
 variable "managed_identities" {
   type = object({
-    system_assigned = optional(bool, false)
+    system_assigned            = optional(bool, false)
+    user_assigned_resource_ids = optional(set(string), [])
   })
   default     = {}
   description = <<DESCRIPTION
 Controls the Managed Identity configuration on this resource.
+
+Only system-assigned identity is supported by the Microsoft.KubernetesConfiguration extension resource.
 DESCRIPTION
   nullable    = false
+
+  validation {
+    condition     = length(var.managed_identities.user_assigned_resource_ids) == 0
+    error_message = "managed_identities.user_assigned_resource_ids must be empty because this resource only supports system-assigned identity."
+  }
 }
 
 variable "management_details" {
