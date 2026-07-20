@@ -77,7 +77,7 @@ module "aks" {
   parent_id = azapi_resource.rg.id
   default_agent_pool = {
     count_of = 1
-    vm_size  = "Standard_D2s_v6"
+    vm_size  = "Standard_B2s_v2"
   }
   dns_prefix = "extension-example"
   managed_identities = {
