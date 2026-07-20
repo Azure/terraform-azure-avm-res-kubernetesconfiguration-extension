@@ -71,7 +71,8 @@ module "aks" {
   }
 }
 
-# This installs the Flux extension on the AKS cluster created above.
+# Wait for all managed cluster operations, including the default agent pool update,
+# before installing an extension that can initiate another AKS operation.
 module "extension" {
   source = "../../"
 
@@ -80,4 +81,6 @@ module "extension" {
   auto_upgrade_minor_version = true
   enable_telemetry           = var.enable_telemetry
   extension_type             = "microsoft.flux"
+
+  depends_on = [module.aks]
 }
