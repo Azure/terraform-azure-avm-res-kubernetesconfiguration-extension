@@ -1,3 +1,3 @@
-# terraform-azurerm-avm-template
+# Kubernetes Configuration Extension
 
-This is a template repo for Terraform Azure Verified Modules.
+This module deploys a `Microsoft.KubernetesConfiguration/extensions` resource to an AKS managed cluster using AzAPI.
