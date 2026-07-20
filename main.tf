@@ -8,13 +8,18 @@ resource "azapi_resource" "this" {
   ignore_null_property = true
   read_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = [
+    "properties.additionalDetails",
+    "properties.aksAssignedIdentity.clientId",
+    "properties.aksAssignedIdentity.objectId",
     "properties.aksAssignedIdentity.principalId",
+    "properties.aksAssignedIdentity.resourceId",
     "properties.aksAssignedIdentity.tenantId",
     "properties.extensionState",
     "properties.currentVersion",
     "properties.customLocationSettings",
     "properties.errorInfo",
     "properties.isSystemExtension",
+    "properties.managementDetails",
     "properties.packageUri",
     "properties.provisioningState",
     "properties.statuses",

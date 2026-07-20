@@ -27,16 +27,8 @@ run "complete_configuration" {
   command = apply
 
   variables {
-    additional_details = {
-      docs                  = "https://example.com/docs"
-      release_notes         = "https://example.com/releases"
-      troubleshooting_guide = "https://example.com/troubleshooting"
-    }
     aks_assigned_identity = {
-      client_id   = "00000000-0000-0000-0000-000000000001"
-      object_id   = "00000000-0000-0000-0000-000000000002"
-      resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/extension"
-      type        = "Workload"
+      type = "Workload"
     }
     auto_upgrade_mode          = "compatible"
     auto_upgrade_minor_version = true
@@ -44,14 +36,6 @@ run "complete_configuration" {
       "helm-controller.enabled" = "true"
     }
     managed_by = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-test"
-    management_details = {
-      access_details = [{
-        allowed_actions = ["Microsoft.KubernetesConfiguration/extensions/read"]
-        description     = "Publisher access"
-        entity          = "publisher"
-      }]
-      category = "publisher"
-    }
     managed_identities = {
       system_assigned = true
     }
@@ -61,13 +45,6 @@ run "complete_configuration" {
         release_namespace = "flux-system"
       }
     }
-    statuses = [{
-      code           = "Ready"
-      display_status = "Ready"
-      level          = "Information"
-      message        = "Extension is ready."
-      time           = "2026-07-17T00:00:00Z"
-    }]
   }
 
   assert {
@@ -81,7 +58,12 @@ run "complete_configuration" {
   }
 
   assert {
-    condition     = azapi_resource.this.body.properties.additionalDetails.docs == "https://example.com/docs"
-    error_message = "Publisher details must be passed to AzAPI."
+    condition     = !can(azapi_resource.this.body.properties.additionalDetails) && !can(azapi_resource.this.body.properties.managementDetails) && !can(azapi_resource.this.body.properties.statuses)
+    error_message = "Read-only response properties must not be passed to AzAPI."
+  }
+
+  assert {
+    condition     = length(keys(azapi_resource.this.body.properties.aksAssignedIdentity)) == 1
+    error_message = "Only the writable AKS assigned identity type may be passed to AzAPI."
   }
 }

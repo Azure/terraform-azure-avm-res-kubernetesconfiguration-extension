@@ -1,6 +1,26 @@
+output "additional_details" {
+  description = "Additional details provided by the extension publisher."
+  value       = try(azapi_resource.this.output.properties.additionalDetails, null)
+}
+
+output "aks_assigned_identity_client_id" {
+  description = "The client ID of the AKS assigned identity."
+  value       = try(azapi_resource.this.output.properties.aksAssignedIdentity.clientId, null)
+}
+
+output "aks_assigned_identity_object_id" {
+  description = "The object ID of the AKS assigned identity."
+  value       = try(azapi_resource.this.output.properties.aksAssignedIdentity.objectId, null)
+}
+
 output "aks_assigned_identity_principal_id" {
   description = "The principal ID of resource identity."
   value       = try(azapi_resource.this.output.properties.aksAssignedIdentity.principalId, null)
+}
+
+output "aks_assigned_identity_resource_id" {
+  description = "The resource ID of the AKS assigned identity."
+  value       = try(azapi_resource.this.output.properties.aksAssignedIdentity.resourceId, null)
 }
 
 output "aks_assigned_identity_tenant_id" {
@@ -46,6 +66,11 @@ output "identity_tenant_id" {
 output "is_system_extension" {
   description = "Whether the extension is a system extension."
   value       = try(azapi_resource.this.output.properties.isSystemExtension, null)
+}
+
+output "management_details" {
+  description = "Management details reported for the extension."
+  value       = try(azapi_resource.this.output.properties.managementDetails, null)
 }
 
 output "name" {

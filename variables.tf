@@ -30,37 +30,15 @@ DESCRIPTION
   }
 }
 
-variable "additional_details" {
-  type = object({
-    docs                  = optional(string)
-    release_notes         = optional(string)
-    troubleshooting_guide = optional(string)
-  })
-  default     = null
-  description = <<DESCRIPTION
-Additional details provided by the extension publisher.
-
-- `docs` - Documentation for the extension.
-- `release_notes` - Release notes for the extension.
-- `troubleshooting_guide` - Troubleshooting guide for the extension.
-DESCRIPTION
-}
-
 variable "aks_assigned_identity" {
   type = object({
-    client_id   = optional(string)
-    object_id   = optional(string)
-    resource_id = optional(string)
-    type        = optional(string)
+    type = optional(string)
   })
   default     = null
   description = <<DESCRIPTION
 Identity of the Extension resource in an AKS cluster
 
 - `type` - The identity type.
-- `client_id` - The client ID of the resource identity.
-- `object_id` - The object ID of the resource identity.
-- `resource_id` - The resource ID of the resource identity.
 
 DESCRIPTION
 
@@ -159,27 +137,6 @@ DESCRIPTION
   }
 }
 
-variable "management_details" {
-  type = object({
-    access_details = optional(list(object({
-      allowed_actions = optional(list(string))
-      description     = optional(string)
-      entity          = optional(string)
-    })))
-    category = optional(string)
-  })
-  default     = null
-  description = <<DESCRIPTION
-Management details for the extension.
-
-- `access_details` - Access details for the managing entity.
-  - `allowed_actions` - Actions allowed for the entity.
-  - `description` - Description of the entity.
-  - `entity` - Entity to which the access details apply.
-- `category` - Category of the managing entity.
-DESCRIPTION
-}
-
 variable "plan" {
   type = object({
     name           = string
@@ -232,32 +189,5 @@ DESCRIPTION
   validation {
     condition     = var.scope == null || (var.scope.cluster == null) != (var.scope.namespace == null)
     error_message = "scope must define exactly one of cluster or namespace."
-  }
-}
-
-variable "statuses" {
-  type = list(object({
-    code           = optional(string)
-    display_status = optional(string)
-    level          = optional(string)
-    message        = optional(string)
-    time           = optional(string)
-  }))
-  default     = null
-  description = <<DESCRIPTION
-Statuses supplied by the extension publisher.
-
-- `code` - Status code.
-- `display_status` - Short status description.
-- `level` - Status level.
-- `message` - Detailed status message.
-- `time` - ISO 8601 status timestamp.
-DESCRIPTION
-
-  validation {
-    condition = var.statuses == null || alltrue([
-      for status in var.statuses : status.level == null || contains(["Error", "Information", "Warning"], status.level)
-    ])
-    error_message = "Each statuses entry level must be one of: \"Error\", \"Information\", or \"Warning\"."
   }
 }

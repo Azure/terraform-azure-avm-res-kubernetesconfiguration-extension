@@ -55,43 +55,17 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="input_additional_details"></a> [additional\_details](#input\_additional\_details)
-
-Description: Additional details provided by the extension publisher.
-
-- `docs` - Documentation for the extension.
-- `release_notes` - Release notes for the extension.
-- `troubleshooting_guide` - Troubleshooting guide for the extension.
-
-Type:
-
-```hcl
-object({
-    docs                  = optional(string)
-    release_notes         = optional(string)
-    troubleshooting_guide = optional(string)
-  })
-```
-
-Default: `null`
-
 ### <a name="input_aks_assigned_identity"></a> [aks\_assigned\_identity](#input\_aks\_assigned\_identity)
 
 Description: Identity of the Extension resource in an AKS cluster
 
 - `type` - The identity type.
-- `client_id` - The client ID of the resource identity.
-- `object_id` - The object ID of the resource identity.
-- `resource_id` - The resource ID of the resource identity.
 
 Type:
 
 ```hcl
 object({
-    client_id   = optional(string)
-    object_id   = optional(string)
-    resource_id = optional(string)
-    type        = optional(string)
+    type = optional(string)
   })
 ```
 
@@ -180,31 +154,6 @@ object({
 
 Default: `{}`
 
-### <a name="input_management_details"></a> [management\_details](#input\_management\_details)
-
-Description: Management details for the extension.
-
-- `access_details` - Access details for the managing entity.
-  - `allowed_actions` - Actions allowed for the entity.
-  - `description` - Description of the entity.
-  - `entity` - Entity to which the access details apply.
-- `category` - Category of the managing entity.
-
-Type:
-
-```hcl
-object({
-    access_details = optional(list(object({
-      allowed_actions = optional(list(string))
-      description     = optional(string)
-      entity          = optional(string)
-    })))
-    category = optional(string)
-  })
-```
-
-Default: `null`
-
 ### <a name="input_plan"></a> [plan](#input\_plan)
 
 Description: Details of the resource plan.
@@ -261,37 +210,29 @@ object({
 
 Default: `null`
 
-### <a name="input_statuses"></a> [statuses](#input\_statuses)
-
-Description: Statuses supplied by the extension publisher.
-
-- `code` - Status code.
-- `display_status` - Short status description.
-- `level` - Status level.
-- `message` - Detailed status message.
-- `time` - ISO 8601 status timestamp.
-
-Type:
-
-```hcl
-list(object({
-    code           = optional(string)
-    display_status = optional(string)
-    level          = optional(string)
-    message        = optional(string)
-    time           = optional(string)
-  }))
-```
-
-Default: `null`
-
 ## Outputs
 
 The following outputs are exported:
 
+### <a name="output_additional_details"></a> [additional\_details](#output\_additional\_details)
+
+Description: Additional details provided by the extension publisher.
+
+### <a name="output_aks_assigned_identity_client_id"></a> [aks\_assigned\_identity\_client\_id](#output\_aks\_assigned\_identity\_client\_id)
+
+Description: The client ID of the AKS assigned identity.
+
+### <a name="output_aks_assigned_identity_object_id"></a> [aks\_assigned\_identity\_object\_id](#output\_aks\_assigned\_identity\_object\_id)
+
+Description: The object ID of the AKS assigned identity.
+
 ### <a name="output_aks_assigned_identity_principal_id"></a> [aks\_assigned\_identity\_principal\_id](#output\_aks\_assigned\_identity\_principal\_id)
 
 Description: The principal ID of resource identity.
+
+### <a name="output_aks_assigned_identity_resource_id"></a> [aks\_assigned\_identity\_resource\_id](#output\_aks\_assigned\_identity\_resource\_id)
+
+Description: The resource ID of the AKS assigned identity.
 
 ### <a name="output_aks_assigned_identity_tenant_id"></a> [aks\_assigned\_identity\_tenant\_id](#output\_aks\_assigned\_identity\_tenant\_id)
 
@@ -328,6 +269,10 @@ Description: The tenant ID of resource.
 ### <a name="output_is_system_extension"></a> [is\_system\_extension](#output\_is\_system\_extension)
 
 Description: Whether the extension is a system extension.
+
+### <a name="output_management_details"></a> [management\_details](#output\_management\_details)
+
+Description: Management details reported for the extension.
 
 ### <a name="output_name"></a> [name](#output\_name)
 
