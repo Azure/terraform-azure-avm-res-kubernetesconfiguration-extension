@@ -1,25 +1,6 @@
 locals {
-  managed_identities = {
-    system_assigned_user_assigned = var.managed_identities.system_assigned || length(var.managed_identities.user_assigned_resource_ids) > 0 ? {
-      this = {
-        type                       = var.managed_identities.system_assigned && length(var.managed_identities.user_assigned_resource_ids) > 0 ? "SystemAssigned, UserAssigned" : length(var.managed_identities.user_assigned_resource_ids) > 0 ? "UserAssigned" : "SystemAssigned"
-        user_assigned_resource_ids = var.managed_identities.user_assigned_resource_ids
-      }
-    } : {}
-    system_assigned = var.managed_identities.system_assigned ? {
-      this = {
-        type = "SystemAssigned"
-      }
-    } : {}
-    user_assigned = length(var.managed_identities.user_assigned_resource_ids) > 0 ? {
-      this = {
-        type                       = "UserAssigned"
-        user_assigned_resource_ids = var.managed_identities.user_assigned_resource_ids
-      }
-    } : {}
-  }
   resource_body = {
-    name = var.name
+    managedBy = var.managed_by
     plan = var.plan == null ? null : {
       name          = var.plan.name
       product       = var.plan.product
@@ -31,6 +12,7 @@ locals {
       aksAssignedIdentity = var.aks_assigned_identity == null ? null : {
         type = var.aks_assigned_identity.type
       }
+      autoUpgradeMode         = var.auto_upgrade_mode
       autoUpgradeMinorVersion = var.auto_upgrade_minor_version
       configurationSettings   = var.configuration_settings == null ? null : { for k, value in var.configuration_settings : k => value }
       extensionType           = var.extension_type
