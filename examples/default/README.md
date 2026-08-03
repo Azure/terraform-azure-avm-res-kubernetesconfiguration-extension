@@ -22,7 +22,7 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 4.46.0, < 5.0.0"
+      version = ">= 4.46.0, < 5.0.2"
     }
     random = {
       source  = "hashicorp/random"
@@ -70,7 +70,7 @@ resource "azapi_resource" "rg" {
 
 module "aks" {
   source  = "Azure/avm-res-containerservice-managedcluster/azurerm"
-  version = "0.6.7"
+  version = "0.7.1"
 
   location  = azapi_resource.rg.location
   name      = module.naming.kubernetes_cluster.name_unique
@@ -109,7 +109,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.9)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 4.46.0, < 5.0.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 4.46.0, < 5.0.2)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0.0)
 
@@ -151,7 +151,7 @@ The following Modules are called:
 
 Source: Azure/avm-res-containerservice-managedcluster/azurerm
 
-Version: 0.6.7
+Version: 0.7.1
 
 ### <a name="module_extension"></a> [extension](#module\_extension)
 
