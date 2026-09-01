@@ -8,7 +8,7 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 4.46.0, < 5.1.1"
+      version = ">= 4.46.0, < 5.3.1"
     }
     random = {
       source  = "hashicorp/random"
@@ -56,7 +56,7 @@ resource "azapi_resource" "rg" {
 
 module "aks" {
   source  = "Azure/avm-res-containerservice-managedcluster/azurerm"
-  version = "0.8.1"
+  version = "0.8.2"
 
   location  = azapi_resource.rg.location
   name      = module.naming.kubernetes_cluster.name_unique
