@@ -43,7 +43,8 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "0.12.0"
 
-  region_filter = ["northeurope"]
+  enable_telemetry = false
+  region_filter    = ["northeurope"]
 }
 
 resource "random_integer" "region_index" {
@@ -79,7 +80,8 @@ module "aks" {
     count_of = 1
     vm_size  = "Standard_B2s_v2"
   }
-  dns_prefix = "extension-example"
+  dns_prefix       = "extension-example"
+  enable_telemetry = false
   managed_identities = {
     system_assigned = true
   }
@@ -94,7 +96,7 @@ module "extension" {
   name                       = "flux"
   parent_id                  = module.aks.resource_id
   auto_upgrade_minor_version = true
-  enable_telemetry           = var.enable_telemetry
+  enable_telemetry           = false
 
   depends_on = [module.aks]
 }
