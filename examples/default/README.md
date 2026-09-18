@@ -43,7 +43,7 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "0.12.0"
 
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   region_filter    = ["northeurope"]
 }
 
@@ -81,7 +81,7 @@ module "aks" {
     vm_size  = "Standard_B2s_v2"
   }
   dns_prefix       = "extension-example"
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   managed_identities = {
     system_assigned = true
   }
@@ -96,7 +96,7 @@ module "extension" {
   name                       = "flux"
   parent_id                  = module.aks.resource_id
   auto_upgrade_minor_version = true
-  enable_telemetry           = false
+  enable_telemetry           = var.enable_telemetry
 
   depends_on = [module.aks]
 }
@@ -139,7 +139,7 @@ If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 
