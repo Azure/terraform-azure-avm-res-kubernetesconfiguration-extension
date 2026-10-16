@@ -6,6 +6,8 @@ mock_provider "azapi" {
   }
 }
 
+mock_provider "terraform" {}
+
 variables {
   configuration_protected_settings = {}
   extension_type                   = "microsoft.flux"
@@ -15,6 +17,10 @@ variables {
 
 run "default_configuration" {
   command = apply
+  providers = {
+    azapi     = azapi
+    terraform = terraform
+  }
 
   assert {
     condition     = azapi_resource.this.type == "Microsoft.KubernetesConfiguration/extensions@2025-03-01"
@@ -32,6 +38,10 @@ run "default_configuration" {
 
 run "complete_configuration" {
   command = apply
+  providers = {
+    azapi     = azapi
+    terraform = terraform
+  }
 
   variables {
     aks_assigned_identity = {
