@@ -8,7 +8,7 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 4.46.0, < 5.5.1"
+      version = ">= 4.46.0, < 5.0.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -79,6 +79,7 @@ module "extension" {
   source = "../../"
 
   extension_type             = "microsoft.flux"
+  location                   = var.location
   name                       = "flux"
   parent_id                  = module.aks.resource_id
   auto_upgrade_minor_version = true
