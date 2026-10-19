@@ -27,7 +27,7 @@ provider "azurerm" {
 
 module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
-  version = "0.12.0"
+  version = "0.13.0"
 
   enable_telemetry = var.enable_telemetry
   region_filter    = ["northeurope"]
@@ -57,7 +57,7 @@ resource "azapi_resource" "rg" {
 
 module "aks" {
   source  = "Azure/avm-res-containerservice-managedcluster/azurerm"
-  version = "0.8.4"
+  version = "0.8.5"
 
   location  = azapi_resource.rg.location
   name      = module.naming.kubernetes_cluster.name_unique
