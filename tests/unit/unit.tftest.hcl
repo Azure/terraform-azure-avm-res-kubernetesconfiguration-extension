@@ -1,6 +1,10 @@
-mock_provider "azapi" {}
-mock_provider "modtm" {}
-mock_provider "random" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
 
 variables {
   configuration_protected_settings = {}
@@ -20,6 +24,9 @@ run "default_configuration" {
   assert {
     condition     = azapi_resource.this.body.properties.extensionType == "microsoft.flux"
     error_message = "The extension type must be passed to the AzAPI body."
+  }
+  variables {
+    location = "eastus"
   }
 }
 
@@ -45,6 +52,7 @@ run "complete_configuration" {
         release_namespace = "flux-system"
       }
     }
+    location = "eastus"
   }
 
   assert {

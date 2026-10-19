@@ -4,11 +4,15 @@ terraform {
   required_providers {
     azapi = {
       source  = "Azure/azapi"
-      version = "~> 2.9"
+      version = "~> 2.12"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 4.46.0, < 5.5.1"
+    }
+    modtm = {
+      source  = "registry.terraform.io/azure/modtm"
+      version = "~> 0.3"
     }
     random = {
       source  = "hashicorp/random"
@@ -29,6 +33,7 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "0.13.0"
 
+  location         = var.location
   enable_telemetry = var.enable_telemetry
   region_filter    = ["northeurope"]
 }
@@ -44,8 +49,8 @@ locals {
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
-  source  = "Azure/naming/azurerm"
-  version = "0.4.4"
+  source  = "Azure/avm-utl-naming/azure"
+  version = "0.2.0"
 }
 
 # This is required for resource modules
@@ -56,8 +61,9 @@ resource "azapi_resource" "rg" {
 }
 
 module "aks" {
-  source  = "Azure/avm-res-containerservice-managedcluster/azurerm"
-  version = "0.8.5"
+  source    = "Azure/avm-res-containerservice-managedcluster/azurerm"
+  version   = "0.8.5"
+  providers = { modtm = modtm }
 
   location  = azapi_resource.rg.location
   name      = module.naming.kubernetes_cluster.name_unique
@@ -79,6 +85,7 @@ module "extension" {
   source = "../../"
 
   extension_type             = "microsoft.flux"
+  location                   = var.location
   name                       = "flux"
   parent_id                  = module.aks.resource_id
   auto_upgrade_minor_version = true

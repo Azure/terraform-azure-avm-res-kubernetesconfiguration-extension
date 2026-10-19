@@ -5,6 +5,12 @@ Type of the Extension, of which this resource is an instance of.  It must be one
 DESCRIPTION
 }
 
+variable "location" {
+  type        = string
+  description = "The Azure region for this module's resources or telemetry deployment."
+  nullable    = false
+}
+
 variable "name" {
   type        = string
   description = <<DESCRIPTION
