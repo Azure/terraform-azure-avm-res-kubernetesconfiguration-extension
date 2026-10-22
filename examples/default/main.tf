@@ -6,10 +6,6 @@ terraform {
       source  = "Azure/azapi"
       version = "~> 2.12"
     }
-    modtm = {
-      source  = "registry.terraform.io/azure/modtm"
-      version = "~> 0.3"
-    }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.5.0, < 4.0.0"
@@ -49,9 +45,8 @@ resource "azapi_resource" "rg" {
 }
 
 module "aks" {
-  source    = "Azure/avm-res-containerservice-managedcluster/azurerm"
-  version   = "0.8.4"
-  providers = { modtm = modtm }
+  source  = "Azure/avm-res-containerservice-managedcluster/azurerm"
+  version = "0.8.4"
 
   location  = azapi_resource.rg.location
   name      = module.naming.kubernetes_cluster.name_unique
