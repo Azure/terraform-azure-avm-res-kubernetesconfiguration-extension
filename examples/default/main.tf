@@ -4,11 +4,7 @@ terraform {
   required_providers {
     azapi = {
       source  = "Azure/azapi"
-      version = "~> 2.9"
-    }
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 4.46.0, < 5.5.1"
+      version = "~> 2.12"
     }
     random = {
       source  = "hashicorp/random"
@@ -17,18 +13,11 @@ terraform {
   }
 }
 
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-}
-
 module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
-  version = "0.12.0"
+  version = "0.13.0"
 
+  location         = var.location
   enable_telemetry = var.enable_telemetry
   region_filter    = ["northeurope"]
 }
@@ -44,8 +33,8 @@ locals {
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
-  source  = "Azure/naming/azurerm"
-  version = "0.4.4"
+  source  = "Azure/avm-utl-naming/azure"
+  version = "0.2.0"
 }
 
 # This is required for resource modules
@@ -79,6 +68,7 @@ module "extension" {
   source = "../../"
 
   extension_type             = "microsoft.flux"
+  location                   = var.location
   name                       = "flux"
   parent_id                  = module.aks.resource_id
   auto_upgrade_minor_version = true

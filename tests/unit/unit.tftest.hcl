@@ -1,6 +1,12 @@
-mock_provider "azapi" {}
-mock_provider "modtm" {}
-mock_provider "random" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+
+mock_provider "terraform" {}
 
 variables {
   configuration_protected_settings = {}
@@ -11,6 +17,10 @@ variables {
 
 run "default_configuration" {
   command = apply
+  providers = {
+    azapi     = azapi
+    terraform = terraform
+  }
 
   assert {
     condition     = azapi_resource.this.type == "Microsoft.KubernetesConfiguration/extensions@2025-03-01"
@@ -21,10 +31,17 @@ run "default_configuration" {
     condition     = azapi_resource.this.body.properties.extensionType == "microsoft.flux"
     error_message = "The extension type must be passed to the AzAPI body."
   }
+  variables {
+    location = "eastus"
+  }
 }
 
 run "complete_configuration" {
   command = apply
+  providers = {
+    azapi     = azapi
+    terraform = terraform
+  }
 
   variables {
     aks_assigned_identity = {
@@ -45,6 +62,7 @@ run "complete_configuration" {
         release_namespace = "flux-system"
       }
     }
+    location = "eastus"
   }
 
   assert {
