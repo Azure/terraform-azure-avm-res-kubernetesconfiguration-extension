@@ -33,12 +33,6 @@ Description: Type of the Extension, of which this resource is an instance of.  I
 
 Type: `string`
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The Azure region for this module's resources or telemetry deployment.
-
-Type: `string`
-
 ### <a name="input_name"></a> [name](#input\_name)
 
 Description: The name of the resource.
@@ -125,6 +119,14 @@ Default: `true`
 ### <a name="input_extension_version"></a> [extension\_version](#input\_extension\_version)
 
 Description: User-specified version of the extension for this extension to 'pin'. To use 'version', autoUpgradeMinorVersion must be 'false'.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
 
 Type: `string`
 

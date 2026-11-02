@@ -68,11 +68,11 @@ module "extension" {
   source = "../../"
 
   extension_type             = "microsoft.flux"
-  location                   = var.location
   name                       = "flux"
   parent_id                  = module.aks.resource_id
   auto_upgrade_minor_version = true
   enable_telemetry           = var.enable_telemetry
+  location                   = var.location
 
   depends_on = [module.aks]
 }
