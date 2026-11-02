@@ -5,12 +5,6 @@ Type of the Extension, of which this resource is an instance of.  It must be one
 DESCRIPTION
 }
 
-variable "location" {
-  type        = string
-  description = "The Azure region for this module's resources or telemetry deployment."
-  nullable    = false
-}
-
 variable "name" {
   type        = string
   description = <<DESCRIPTION
@@ -115,6 +109,17 @@ variable "extension_version" {
   description = <<DESCRIPTION
 User-specified version of the extension for this extension to 'pin'. To use 'version', autoUpgradeMinorVersion must be 'false'.
 DESCRIPTION
+}
+
+variable "location" {
+  type        = string
+  default     = null
+  description = "The Azure region for this module's resources or telemetry deployment."
+
+  validation {
+    condition     = !var.enable_telemetry || var.location != null
+    error_message = "The location must not be null when telemetry is enabled."
+  }
 }
 
 variable "managed_by" {
