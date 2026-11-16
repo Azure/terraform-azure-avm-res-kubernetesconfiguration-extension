@@ -46,7 +46,7 @@ resource "azapi_resource" "rg" {
 
 module "aks" {
   source  = "Azure/avm-res-containerservice-managedcluster/azurerm"
-  version = "0.8.7"
+  version = "0.9.0"
 
   location  = azapi_resource.rg.location
   name      = module.naming.kubernetes_cluster.name_unique
